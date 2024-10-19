@@ -27,6 +27,33 @@ namespace Stock.Controllers
             if (category == null) { return NotFound(); }
             return category;
         }
+        [HttpPost]
+        public ActionResult <Category> CreateCategory([FromBody] Category category)
+        {
+            context.category.Add(category);
+            context.SaveChanges();
+            return category;
+        }
+        [HttpPut("{id}")]
+        public IActionResult UpdateCategory(int id, [FromBody] Category category)
+        {
+            var ExistingCategroy = context.category.Include(p => p.products).FirstOrDefault(p => p.Id == id);
+            if(ExistingCategroy == null) { return NotFound(); }
+            ExistingCategroy.Id = category.Id;
+            ExistingCategroy.Name = category.Name;
+            context.SaveChanges();
+            return Ok();
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCategory(int id)
+        {
+            var ExistingCategroy = context.category.Include(p => p.products).FirstOrDefault(p => p.Id == id);
+            if (ExistingCategroy == null) { return NotFound(); }
+            context.category.Remove(ExistingCategroy);
+            context.SaveChanges();
+            return Ok();
+        }
+
 
     }
 }
